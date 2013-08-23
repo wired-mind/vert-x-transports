@@ -4,6 +4,7 @@ apply plugin: 'idea'
 
 group = 'com.nxttxn'
 version = '1.0.0'
+archivesBaseName = 'vertx-transport'
 
 repositories {
     maven { url 'https://repository.apache.org/content/groups/snapshots'}
