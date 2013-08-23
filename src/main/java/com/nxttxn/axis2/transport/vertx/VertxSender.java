@@ -116,15 +116,17 @@ public class VertxSender extends AbstractTransportSender {
                 }
             });
 //            final String contentType = getContentType(messageContext);
-            final String contentType = "application/soap+xml"; //Not sure the right way to infer this in axis2 yet. Hard code for now.
+            final String contentType = "text/xml;charset=UTF-8"; //Not sure the right way to infer this in axis2 yet. Hard code for now.
             httpClientRequest.exceptionHandler(exceptionHandler);
             final Buffer buffer = getBodyBuffer(messageContext);
+            String soapAction = String.format("\"%s\"", messageContext.getSoapAction() != null ? messageContext.getSoapAction() : "");
             log.info(String.format("[Vertx Axis2 Transport] [Request] [%s - %s]. Warning, contentType is hard coded right now !!!", path, contentType));
             log.debug(String.format("[Vertx Axis2 Transport] [Request] [%s] - Request body: %s", path, buffer.toString()));
-
+            log.debug("[Vertx Axis2 Transport] [Request] SOAPAction: {}", soapAction);
+            
             httpClientRequest = httpClientRequest.putHeader("Content-Type", contentType)
                     .putHeader("Content-Length", buffer.length())
-                    .putHeader("SOAPAction", messageContext.getSoapAction());
+                    .putHeader("SOAPAction", soapAction);
 
             if (buffer.length() == 0) {
                 httpClientRequest.end();
