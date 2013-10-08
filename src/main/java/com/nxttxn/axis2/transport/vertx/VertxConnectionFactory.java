@@ -74,6 +74,12 @@ public class VertxConnectionFactory {
         final RouteMatcher routeMatcher = new RouteMatcher();
         log.info("Configure route for {}", path);
         routeMatcher.post(path, requestHandler);
+        routeMatcher.get("/status", new Handler<HttpServerRequest>() {
+            @Override
+            public void handle(HttpServerRequest request) {
+                request.response.end("Ok");
+            }
+        });
         final Vertx vertx = VertxLocator.vertx;
         HttpServer httpServer = vertx.createHttpServer().requestHandler(routeMatcher);
         if (keystorePath != null) {
