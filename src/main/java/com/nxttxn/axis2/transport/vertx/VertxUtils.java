@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
  * To change this template use File | Settings | File Templates.
  */
 public class VertxUtils {
+    public static final String VERTX = "VERTX";
     private static Logger log = LoggerFactory.getLogger(VertxUtils.class);
 
     public static void setSOAPEnvelope(Buffer buffer, MessageContext messageContext, String contentType) throws AxisFault {

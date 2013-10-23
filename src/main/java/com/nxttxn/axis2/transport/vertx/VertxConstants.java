@@ -19,4 +19,5 @@ public class VertxConstants {
     public static final String VERTX_TRUSTSTORE_PATH = "vertx.truststore.path";
     public static final String VERTX_TRUSTSTORE_PASSWORD = "vertx.truststore.password";
     public static final String VERTX_TRUST_ALL = "vertx.trust.all";
+    public static final String HTTP_CLIENT = "HTTP_CLIENT";
 }

@@ -40,6 +40,7 @@ public class VertxListener extends AbstractTransportListenerEx<VertxEndpoint> {
     public VertxConnectionFactory getConnectionFactory(AxisService service) throws AxisFault {
 
         connectionFactoryManager.addParameter(PATH, service.getParameter(PATH).getValue());
+        connectionFactoryManager.addParameter(VertxUtils.VERTX, service.getParameter(VertxUtils.VERTX).getValue());
         return connectionFactoryManager.getVertxConnectionFactory();
 
     }

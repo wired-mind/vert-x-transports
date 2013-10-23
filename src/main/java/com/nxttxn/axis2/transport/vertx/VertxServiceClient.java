@@ -2,22 +2,29 @@ package com.nxttxn.axis2.transport.vertx;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.vertx.java.core.Handler;
+import org.vertx.java.core.Vertx;
+import org.vertx.java.core.http.HttpClient;
+import org.vertx.java.deploy.impl.VertxLocator;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -66,6 +73,30 @@ public class VertxServiceClient extends ServiceClient {
                 callback.onError(e);
             }
         });
+
+        final EndpointReference to = getOptions().getTo();
+        final URL url;
+        try {
+            url = new URL(to.getAddress());
+        } catch (MalformedURLException e) {
+            throw AxisFault.makeFault(e);
+        }
+
+        final AxisConfiguration axisConfiguration = mc.getConfigurationContext().getAxisConfiguration();
+        final TransportOutDescription transportOut = axisConfiguration.getTransportOut(url.getProtocol());
+
+        transportOut.addParameter(new Parameter(VertxUtils.VERTX, VertxLocator.vertx));
+
+
+        //use the protocol to load the http client. The host is set in axis2 and won't change. We'll use the
+        //path from the url though.
+        VertxConnectionFactory vertxConnectionFactory = new VertxConnectionFactory(transportOut);
+        //we'll want to cache these clients
+        final HttpClient httpClient = vertxConnectionFactory.getHttpClient(url);
+
+        mc.setProperty(VertxConstants.HTTP_CLIENT, httpClient);
+
+
         mepClient.setCallback(callback);
         mepClient.addMessageContext(mc);
 

@@ -4,6 +4,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vertx.java.core.AsyncResult;
+import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.Vertx;
 import org.vertx.java.core.http.HttpClient;
@@ -37,11 +39,13 @@ public class VertxConnectionFactory {
     private String truststorePassword;
     private String path;
     private boolean trustAll;
+    private final Vertx vertx;
 
 
     public VertxConnectionFactory(ParameterInclude trpDesc) {
 
         this.trpDesc = trpDesc;
+        vertx = (Vertx) trpDesc.getParameter(VertxUtils.VERTX).getValue();
         host = (String) trpDesc.getParameter(VertxConstants.VERTX_HOST_NAME).getValue();
         port = (String) trpDesc.getParameter(VertxConstants.VERTX_PORT).getValue();
         if (trpDesc.getParameter(VertxListener.PATH) != null) {
@@ -80,7 +84,6 @@ public class VertxConnectionFactory {
                 request.response.end("Ok");
             }
         });
-        final Vertx vertx = VertxLocator.vertx;
         HttpServer httpServer = vertx.createHttpServer().requestHandler(routeMatcher);
         if (keystorePath != null) {
             httpServer = httpServer.setSSL(true)
@@ -92,7 +95,6 @@ public class VertxConnectionFactory {
     }
 
     public HttpClient getHttpClient(URL url) {
-        final Vertx vertx = VertxLocator.vertx;
         HttpClient httpClient = vertx.createHttpClient().setKeepAlive(false).setMaxPoolSize(20).setHost(url.getHost());
 
         if (keystorePath != null) {
