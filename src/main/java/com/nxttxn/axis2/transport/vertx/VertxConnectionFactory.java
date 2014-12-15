@@ -12,7 +12,7 @@ import org.vertx.java.core.http.HttpClient;
 import org.vertx.java.core.http.HttpServer;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.RouteMatcher;
-import org.vertx.java.deploy.impl.VertxLocator;
+
 
 import java.net.URL;
 import java.nio.file.Paths;
@@ -81,7 +81,7 @@ public class VertxConnectionFactory {
         routeMatcher.get("/status", new Handler<HttpServerRequest>() {
             @Override
             public void handle(HttpServerRequest request) {
-                request.response.end("Ok");
+                request.response().end("Ok");
             }
         });
         HttpServer httpServer = vertx.createHttpServer().requestHandler(routeMatcher);

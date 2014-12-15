@@ -36,7 +36,7 @@ public class HttpAxis2ServerHandler implements Handler<HttpServerRequest> {
                 MessageContext messageContext = null;
                 try {
                     messageContext = vertxEndpoint.createMessageContext();
-                    messageContext.setProperty(HttpAxis2ServerHandler.RESPONSE, httpServerRequest.response);
+                    messageContext.setProperty(HttpAxis2ServerHandler.RESPONSE, httpServerRequest.response());
                 } catch (AxisFault axisFault) {
                     log.error("Failed to create axis2 message context", axisFault);
                 }

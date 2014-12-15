@@ -63,11 +63,11 @@ public class VertxSender extends AbstractTransportSender {
             final MessageContext responseMessageContext = createResponseMessageContext(messageContext);
 
             properties = BaseUtils.getEPRProperties(targetEPR);
-            final Handler<Exception> exceptionHandler = new Handler<Exception>() {
+            final Handler<Throwable> exceptionHandler = new Handler<Throwable>() {
                 @Override
-                public void handle(Exception e) {
+                public void handle(Throwable e) {
                     log.error("Failed to send axis2 message", e);
-                    invokeSenderErrorCallback(messageContext, e);
+                    invokeSenderErrorCallback(messageContext, new Exception(e));
                 }
             };
             final URL url;
@@ -105,7 +105,7 @@ public class VertxSender extends AbstractTransportSender {
                         @Override
                         public void handle(Buffer buffer) {
                             log.debug("[Vertx Axis2 Transport] [Response] Body: {}", buffer.toString());
-                            for (Map.Entry<String, String> entry : httpClientResponse.headers().entrySet()) {
+                            for (Map.Entry<String, String> entry : httpClientResponse.headers().entries()) {
                                 log.debug("[Vertx Axis2 Transport] [Response] Header: {} {}", entry.getKey(), entry.getValue());
 
                             }
@@ -139,7 +139,7 @@ public class VertxSender extends AbstractTransportSender {
             log.debug("[Vertx Axis2 Transport] [Request] [BUFFER]: {}", buffer.toString());
             
             httpClientRequest = httpClientRequest.putHeader("Content-Type", contentType)
-                    .putHeader("Content-Length", buffer.length())
+                    .putHeader("Content-Length", String.valueOf(buffer.length()))
                     .putHeader("SOAPAction", soapAction)
                     .putHeader("User-Agent", "Apache-HttpClient/4.1.1 (java 1.5)");
 
@@ -184,10 +184,10 @@ public class VertxSender extends AbstractTransportSender {
         }
 
         response.setChunked(true); // or set Content-length
-        response.statusMessage = "OK";    //should be tied to statuscode probably
+        response.setStatusMessage("OK");    //should be tied to statuscode probably
 
-        response.statusCode = 200;
-        log.info(String.format("Http result handler ready to respond with status: %s", response.statusCode));
+        response.setStatusCode(200);
+        log.info(String.format("Http result handler ready to respond with status: %s", response.getStatusCode()));
         response.end(buffer);
 
     }

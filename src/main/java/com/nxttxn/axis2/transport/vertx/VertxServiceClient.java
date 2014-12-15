@@ -18,9 +18,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.vertx.java.core.Handler;
-import org.vertx.java.core.Vertx;
 import org.vertx.java.core.http.HttpClient;
-import org.vertx.java.deploy.impl.VertxLocator;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
